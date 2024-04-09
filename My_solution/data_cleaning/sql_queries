@@ -1,0 +1,97 @@
+
+-- 1. which group has most number of standard lunch-----------vs
+select ethnicity,count(lunch) as no_of_standard_lunch from stu_data
+where lunch='standard'
+group by ethnicity
+order by no_of_standard_lunch desc;
+----------------------------------------------------------------------------------------------------------------------------------------------------
+-- 2. which group has most number of free/reduced lunch-------------vs
+select ethnicity,count(lunch) as `no_of_free/reduced_lunch` from stu_data
+where lunch='free/reduced'
+group by ethnicity
+order by `no_of_free/reduced_lunch` desc;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 3. fetch data which has top 5 math score belong to their parent_education
+with tab as(
+select ethnicity,id,`math score`,
+dense_rank() over(partition by ethnicity order by `math score` desc) as top_5 from stu_data)
+select * from tab
+where top_5<=5;
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 4. count the maths score and return average of the every score----vs
+with tab as(
+select `math score`,count(`math score`) as no_stu_scored from stu_data
+group by `math score` 
+order by no_stu_scored desc),
+tab_1 as (
+select *,(
+(no_stu_scored/(select sum(no_stu_scored) from tab))*100) as average from tab
+) select `math score`,average from tab_1
+order by `math score` desc;
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 5. return top 5 writing score and their parents education
+with tab as(
+select id,parent_education,`writing score`,
+dense_rank() over(order by `writing score` desc) as top_5 from stu_data)
+select * from tab
+where top_5<=5;
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 6. count the female canditate based on the ethnicity--- vs
+select ethnicity,count(gender) as no_female from stu_data
+where gender='female'
+group by ethnicity;
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 7. return top 5 reading marks who are all completed testcourse
+with tab as(
+select id,`reading score`,
+dense_rank() over(order by `reading score` desc) as top_5 from stu_data
+where test_course='completed')
+select * from tab 
+where top_5<=5;
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 8. which ethnicity has most number of masters degree---vs
+select ethnicity,count(parent_education) as no_of_masters_degree
+from stu_data
+where parent_education="master's degree"
+group by ethnicity
+order by no_of_masters_degree desc;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 9. which ethnicity has most number of high school
+select ethnicity,count(parent_education) as no_of_high_school
+from stu_data
+where parent_education="high school"
+group by ethnicity
+order by no_of_high_school desc;
+--------------------------------------------------------------------------------------------------------------------------------------------------
+-- 10. return the parent_education who doesnt complete test_course
+select id,gender,ethnicity,parent_education 
+from stu_data where test_course='none';
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 11. return data who writing mark top 5 and they would be completed the test_course and their parent education not equal to high school
+with tab as(
+select parent_education,`writing score`,
+dense_rank() over(partition by parent_education order by `writing score` desc) as top_5 from stu_data
+where test_course='completed' and parent_education!='high school' )
+select * from tab 
+where top_5<=5;
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 12. fetch top scorer in reading based on the parent education------vs
+select parent_education,max(`reading score`) from stu_data
+group by parent_education;
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 13. fetch top 5 least score in math and fetch their etnicity----vs
+with tab as(
+select ethnicity,`math score`,
+dense_rank() over( order by `math score`) as least_5 from stu_data)
+select ethnicity, `math score` from tab where least_5<=5;
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 14. fetch data who's math score greater than reading score and writing score
+select id,ethnicity,`math score`,`writing score`,`reading score` from stu_data
+where `math score`> `writing score`and `math score`>`reading score`;
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 15. fetch data which parent education has most number of standard lunch----vs
+select parent_education,count(lunch) as no_of_standard_lunch from stu_data
+where lunch='standard'
+group by parent_education;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
