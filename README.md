@@ -1,6 +1,8 @@
 # Student_performance_analysis
 
-DASHBOARD
+![Capture](https://github.com/Kiyasudeenjamal/Student_performance_analysis/assets/96764879/07148df6-47c2-410e-9ab1-771cae8e145e)
 
-![DASHBOARD](https://github.com/Kiyasudeenjamal/Student_performance_analysis/assets/96764879/53f14fc3-1aac-4125-b191-ec23d50bdeef)
+
+
+
 
